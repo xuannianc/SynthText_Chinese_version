@@ -74,18 +74,18 @@ def add_res_to_db(imgname,res,db):
     db['data'].create_dataset(dname,data=res[i]['img'])
     db['data'][dname].attrs['charBB'] = res[i]['charBB']
     db['data'][dname].attrs['wordBB'] = res[i]['wordBB']
-    print 'type of res[i][\'txt\'] ',type(res[i]['txt'])
+    print('type of res[i][\'txt\'] ',type(res[i]['txt']))
          
     #db['data'][dname].attrs['txt'] = res[i]['txt']
     db['data'][dname].attrs.create('txt', res[i]['txt'], dtype=h5py.special_dtype(vlen=unicode))
-    print 'type of db ',type(db['data'][dname].attrs['txt']) 
-    print colorize(Color.GREEN,'successfully added')
-    print res[i]['txt']
-    print res[i]['img'].shape
-    print 'charBB',res[i]['charBB'].shape
-    print 'charBB',res[i]['charBB']
-    print 'wordBB',res[i]['wordBB'].shape
-    print 'wordBB',res[i]['wordBB']
+    print('type of db ',type(db['data'][dname].attrs['txt']) )
+    print(colorize(Color.GREEN,'successfully added'))
+    print(res[i]['txt'])
+    print(res[i]['img'].shape)
+    print('charBB',res[i]['charBB'].shape)
+    print('charBB',res[i]['charBB'])
+    print('wordBB',res[i]['wordBB'].shape)
+    print('wordBB',res[i]['wordBB'])
     '''
     img = Image.fromarray(res[i]['img'])
     hsv_img=np.array(rgb2hsv(img))
@@ -110,14 +110,14 @@ def rgb2gray(image):
       
 def main(viz=False):
   # open databases:
-  print colorize(Color.BLUE,'getting data..',bold=True)
+  print(colorize(Color.BLUE,'getting data..',bold=True))
   db = get_data()
-  print colorize(Color.BLUE,'\t-> done',bold=True)
+  print(colorize(Color.BLUE,'\t-> done',bold=True))
 
   # open the output h5 file:
   out_db = h5py.File(OUT_FILE,'w')
   out_db.create_group('/data')
-  print colorize(Color.GREEN,'Storing the output in: '+OUT_FILE, bold=True)
+  print(colorize(Color.GREEN,'Storing the output in: '+OUT_FILE, bold=True))
 
   # get the names of the image files in the dataset:
   imnames = sorted(db['image'].keys())
@@ -129,7 +129,7 @@ def main(viz=False):
 
   RV3 = RendererV3(DATA_PATH,max_time=SECS_PER_IMG)
   
-  for i in xrange(start_idx,end_idx):
+  for i in range(start_idx,end_idx):
     t1=time.time()
     imname = imnames[i]
     try:
@@ -141,31 +141,31 @@ def main(viz=False):
       #  useful to use the other one):
       img_resize=img.resize(db['depth'][imname].shape)
       depth = db['depth'][imname][:].T
-      print 'depth shape,img shape',depth.shape,np.array(img).shape
-      print 'depth info',depth
-      print 'depth max min',np.max(depth),np.min(depth)
+      print('depth shape,img shape',depth.shape,np.array(img).shape)
+      print('depth info',depth)
+      print('depth max min',np.max(depth),np.min(depth))
       #depth = depth[:,:,1]
       #modify the depth with HSV H_channel
       
       #img_resize=img.resize(depth.shape)
       hsv_img=np.array(rgb2hsv(img_resize))
-      print 'hsv_img_shape',hsv_img.shape
+      print('hsv_img_shape',hsv_img.shape)
       #print 'hsv_img',hsv_img
       H=hsv_img[:,:,2]
       H=H.T
       H=H.astype('float32')
-      print 'H_channel',H.shape,H 
-      print 'H_max min',np.max(H),np.min(H)
-      print 'scale',np.max(depth)/np.max(H)
+      print('H_channel',H.shape,H)
+      print('H_max min',np.max(H),np.min(H))
+      print('scale',np.max(depth)/np.max(H))
       #depth= (np.max(depth)/np.max(H))*H
       #depth= H
       #print np.isnan(H).any()
       #print np.isinf(H).any()
       #print np.isnan(depth).any()
       #print np.isinf(depth).any()
-      print 'depth shape',depth.shape
+      print('depth shape',depth.shape)
       #print 'depth info',depth
-      print 'depth max min',np.max(depth),np.min(depth)
+      print('depth max min',np.max(depth),np.min(depth))
       
       gray=np.array(rgb2gray(img_resize))
       #print 'gray',gray.shape,gray
@@ -202,14 +202,14 @@ def main(viz=False):
         else:
             res = RV3.render_text(img,depth,seg,area,label,
                             ninstance=INSTANCE_PER_IMAGE,viz=viz)
-      print 'time consume in each pic',t2-t1
+      print('time consume in each pic',t2-t1)
       # visualize the output:
       if viz:
-        if 'q' in raw_input(colorize(Color.RED,'continue? (enter to continue, q to exit): ',True)):
+        if 'q' in input(colorize(Color.RED,'continue? (enter to continue, q to exit): ',True)):
           break
     except:
       traceback.print_exc()
-      print colorize(Color.GREEN,'>>>> CONTINUING....', bold=True)
+      print(colorize(Color.GREEN,'>>>> CONTINUING....', bold=True))
       continue
   db.close()
   out_db.close()

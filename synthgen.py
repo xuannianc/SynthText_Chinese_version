@@ -91,7 +91,7 @@ class TextRegions(object):
         # filter bad regions:
         filt = np.array(filt)
         area = area[filt]
-        R = [R[i] for i in xrange(len(R)) if filt[i]]
+        R = [R[i] for i in range(len(R)) if filt[i]]
 
         # sort the regions based on areas:
         aidx = np.argsort(-area)
@@ -318,10 +318,10 @@ def viz_masks(fignum,rgb,seg,depth,label):
     plt.close(fignum)
     plt.figure(fignum)
     ims = [rgb,mim,depth,img]
-    for i in xrange(len(ims)):
+    for i in range(len(ims)):
         plt.subplot(2,2,i+1)
         plt.imshow(ims[i])
-        print 'shape shows',ims[i].shape
+        print('shape shows',ims[i].shape)
     plt.show(block=False)
 
 def viz_regions(img,xyz,seg,planes,labels):
@@ -528,7 +528,7 @@ class RendererV3(object):
         text_mask = self.feather(text_mask, min_h)
 
         im_final = self.colorizer.color(rgb,[text_mask],np.array([min_h]))
-        print colorize(Color.GREEN, 'text in synthgen.py/place_text to return '+text)
+        print(colorize(Color.GREEN, 'text in synthgen.py/place_text to return '+text))
         return im_final, text, bb, collision_mask
 
 
@@ -556,7 +556,7 @@ class RendererV3(object):
         bb_idx = np.r_[0, np.cumsum([len(w) for w in wrds])]
         wordBB = np.zeros((2,4,len(wrds)), 'float32')
         
-        for i in xrange(len(wrds)):
+        for i in range(len(wrds)):
             cc = charBB[:,:,bb_idx[i]:bb_idx[i+1]]
 
             # fit a rotated-rectangle:
@@ -574,7 +574,7 @@ class RendererV3(object):
                             cc[3,:]].T
             perm4 = np.array(list(itertools.permutations(np.arange(4))))
             dists = []
-            for pidx in xrange(perm4.shape[0]):
+            for pidx in range(perm4.shape[0]):
                 d = np.sum(np.linalg.norm(box[perm4[pidx],:]-cc_tblr,axis=1))
                 dists.append(d)
             wordBB[:,:,i] = box[perm4[np.argmin(dists)],:].T
@@ -630,10 +630,10 @@ class RendererV3(object):
             return []
 
         res = []
-        for i in xrange(ninstance):
+        for i in range(ninstance):
             place_masks = copy.deepcopy(regions['place_mask'])
 
-            print colorize(Color.CYAN, " ** instance # : %d"%i)
+            print(colorize(Color.CYAN, " ** instance # : %d"%i))
 
             idict = {'img':[], 'charBB':None, 'wordBB':None, 'txt':None}
 
@@ -663,8 +663,7 @@ class RendererV3(object):
                             txt_render_res = self.place_text(img,place_masks[ireg],
                                                              regions['homography'][ireg],
                                                              regions['homography_inv'][ireg])
-                except TimeoutException, msg:
-                    print msg
+                except TimeoutException():
                     continue
                 except:
                     traceback.print_exc()
@@ -679,7 +678,7 @@ class RendererV3(object):
                     # store the result:
                     itext.append(text)
                     ibb.append(bb)
-                    print colorize(Color.GREEN, 'text in synthgen.py/render_text append into itext '+text)
+                    print(colorize(Color.GREEN, 'text in synthgen.py/render_text append into itext '+text))
 
             if  placed:
                 # at least 1 word was placed in this instance:
@@ -687,12 +686,12 @@ class RendererV3(object):
                 idict['txt'] = itext
                 idict['charBB'] = np.concatenate(ibb, axis=2)
                 idict['wordBB'] = self.char2wordBB(idict['charBB'].copy(), ' '.join(itext))
-                print colorize(Color.GREEN, itext)
+                print(colorize(Color.GREEN, itext))
                 res.append(idict.copy())
                 if viz:
                     viz_textbb(1,img, [idict['wordBB']], alpha=1.0)
                     viz_masks(2,img,seg,depth,regions['label'])
                     # viz_regions(rgb.copy(),xyz,seg,regions['coeff'],regions['label'])
                     if i < ninstance-1:
-                        raw_input(colorize(Color.BLUE,'continue?',True))                    
+                        input(colorize(Color.BLUE,'continue?',True))
         return res

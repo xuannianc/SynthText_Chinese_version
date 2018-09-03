@@ -1,0 +1,9 @@
+pygame
+opencv-python
+opencv-contrib-python
+pillow
+numpy
+matplotlib
+h5py
+scipy
+wget
