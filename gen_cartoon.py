@@ -54,7 +54,7 @@ def get_data():
       colorprint(Color.BLUE,'\n\tdata saved at:'+DB_FNAME,bold=True)
       sys.stdout.flush()
     except:
-      print colorize(Color.RED,'Data not found and have problems downloading.',bold=True)
+      print(colorize(Color.RED,'Data not found and have problems downloading.',bold=True))
       sys.stdout.flush()
       sys.exit(-1)
   # open the h5 file and return:
@@ -67,25 +67,25 @@ def add_res_to_db(imgname,res,db):
   and other metadata to the dataset.
   """
   ninstance = len(res)
-  for i in xrange(ninstance):
-    print colorize(Color.GREEN,'added into the db %s '%res[i]['txt'])
+  for i in range(ninstance):
+    print(colorize(Color.GREEN,'added into the db %s '%res[i]['txt']))
     
     dname = "%s_%d"%(imgname, i)
     db['data'].create_dataset(dname,data=res[i]['img'])
     db['data'][dname].attrs['charBB'] = res[i]['charBB']
     db['data'][dname].attrs['wordBB'] = res[i]['wordBB']
-    print 'type of res[i][\'txt\'] ',type(res[i]['txt'])
+    print('type of res[i][\'txt\'] ',type(res[i]['txt']))
          
     #db['data'][dname].attrs['txt'] = res[i]['txt']
     db['data'][dname].attrs.create('txt', res[i]['txt'], dtype=h5py.special_dtype(vlen=unicode))
-    print 'type of db ',type(db['data'][dname].attrs['txt']) 
-    print colorize(Color.GREEN,'successfully added')
-    print res[i]['txt']
-    print res[i]['img'].shape
-    print 'charBB',res[i]['charBB'].shape
-    print 'charBB',res[i]['charBB']
-    print 'wordBB',res[i]['wordBB'].shape
-    print 'wordBB',res[i]['wordBB']
+    print('type of db ',type(db['data'][dname].attrs['txt']))
+    print(colorize(Color.GREEN,'successfully added'))
+    print(res[i]['txt'])
+    print(res[i]['img'].shape)
+    print('charBB',res[i]['charBB'].shape)
+    print('charBB',res[i]['charBB'])
+    print('wordBB',res[i]['wordBB'].shape)
+    print('wordBB',res[i]['wordBB'])
     '''
     img = Image.fromarray(res[i]['img'])
     hsv_img=np.array(rgb2hsv(img))

@@ -78,7 +78,7 @@ class TextRegions(object):
 
             coords = np.c_[xs,ys].astype('float32')
             rect = cv2.minAreaRect(coords)          
-            box = np.array(cv2.cv.BoxPoints(rect))
+            box = np.array(cv2.boxPoints(rect))
             h,w,rot = TextRegions.get_hw(box,return_rot=True)
 
             f = (h > TextRegions.minHeight 
@@ -111,7 +111,7 @@ class TextRegions(object):
 
         y_m,x_m = np.where(mask)
         mask_idx = np.zeros_like(mask,'int32')
-        for i in xrange(len(y_m)):
+        for i in range(len(y_m)):
             mask_idx[y_m[i],x_m[i]] = i
 
         xp,xn = np.zeros_like(mask), np.zeros_like(mask)
@@ -136,7 +136,7 @@ class TextRegions(object):
         Y = np.transpose(np.c_[ys,ys+s,ys-s,ys+s,ys-s][:,:,None],(1,2,0))
         sample_idx = np.concatenate([Y,X],axis=1)
         mask_nn_idx = np.zeros((5,sample_idx.shape[-1]),'int32')
-        for i in xrange(sample_idx.shape[-1]):
+        for i in range(sample_idx.shape[-1]):
             mask_nn_idx[:,i] = mask_idx[sample_idx[:,:,i][:,0],sample_idx[:,:,i][:,1]]
         return mask_nn_idx
 
@@ -226,7 +226,7 @@ def get_text_placement_mask(xyz,mask,plane,pad=2,viz=False):
     pts,pts_fp = [],[]
     center = np.array([W,H])/2
     n_front = np.array([0.0,0.0,-1.0])
-    for i in xrange(len(contour)):
+    for i in range(len(contour)):
         cnt_ij = contour[i]
         xyz = su.DepthCamera.plane2xyz(center, cnt_ij, plane)
         R = su.rot3d(plane[:3],n_front)
@@ -248,7 +248,7 @@ def get_text_placement_mask(xyz,mask,plane,pad=2,viz=False):
     # the same scale as the target region:
     s = rescale_frontoparallel(pts_tmp,boxR,pts[0])
     boxR *= s
-    for i in xrange(len(pts_fp)):
+    for i in range(len(pts_fp)):
         pts_fp[i] = s*((pts_fp[i]-mu[None,:]).dot(R2d.T) + mu[None,:])
 
     # paint the unrotated contour points:
@@ -258,7 +258,7 @@ def get_text_placement_mask(xyz,mask,plane,pad=2,viz=False):
 
     place_mask = 255*np.ones((np.ceil(COL)+pad,np.ceil(ROW)+pad),'uint8')
 
-    pts_fp_i32 = [(pts_fp[i]+minxy[None,:]).astype('int32') for i in xrange(len(pts_fp))]
+    pts_fp_i32 = [(pts_fp[i]+minxy[None,:]).astype('int32') for i in range(len(pts_fp))]
     cv2.drawContours(place_mask,pts_fp_i32,-1,0,
                      thickness=cv2.cv.CV_FILLED,
                      lineType=8,hierarchy=hier)
@@ -280,7 +280,7 @@ def get_text_placement_mask(xyz,mask,plane,pad=2,viz=False):
         plt.subplot(1,2,2)
         plt.imshow(~place_mask)
         plt.hold(True)
-        for i in xrange(len(pts_fp_i32)):
+        for i in range(len(pts_fp_i32)):
             plt.scatter(pts_fp_i32[i][:,0],pts_fp_i32[i][:,1],
                         edgecolors='none',facecolor='g',alpha=0.5)
         plt.show()
@@ -352,10 +352,10 @@ def viz_textbb(fignum,text_im, bb_list,alpha=1.0):
     plt.imshow(text_im)
     plt.hold(True)
     H,W = text_im.shape[:2]
-    for i in xrange(len(bb_list)):
+    for i in range(len(bb_list)):
         bbs = bb_list[i]
         ni = bbs.shape[-1]
-        for j in xrange(ni):
+        for j in range(ni):
             bb = bbs[:,:,j]
             bb = np.c_[bb,bb[:,0]]
             plt.plot(bb[0,:], bb[1,:], 'r', linewidth=2, alpha=alpha)
